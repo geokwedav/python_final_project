@@ -1,0 +1,277 @@
+---
+title: "Python Workshop Final Project"
+author: "George Davis"
+format: dashboard
+---
+
+
+
+
+```{python}
+import pandas as pd
+import plotly.express as px
+from itables import show 
+
+# Load raw data from specified paths: child mortality
+
+child_mort_raw = pd.read_csv("data/child_mortality_0_5_year_olds_dying_per_1000_born.csv")
+
+# Applying 'drop' to remove the *geo* column and keeping the dataframe.
+child_mort_raw = child_mort_raw.drop(columns=["geo"])
+
+# Load raw data from specified paths: under five population
+
+under_five_pop_raw = pd.read_csv("data/u5pop.csv")
+
+# Applying 'drop' to remove the *geo* column and keeping the dataframe.
+under_five_pop_raw = under_five_pop_raw.drop(columns=["geo"])
+
+#Keeping the renaming changes in the dataframe
+
+child_mort_raw = child_mort_raw.rename(columns={"name": "Country"})
+
+# Keeping the renaming changes in the dataframe.
+under_five_pop_raw = under_five_pop_raw.rename(columns={"name": "Country"})
+
+# Melt from wide to long format and adding a new dataframe 'child_mort_long'
+
+child_mort_long = child_mort_raw.melt(
+    id_vars=["Country"],
+    var_name="Year",
+    value_name="Deaths"
+).sort_values(by=["Country", "Year"])
+
+# Melt from wide to long format and adding a new dataframe 'under_five_pop_long'
+
+under_five_pop_long = under_five_pop_raw.melt(
+    id_vars=["Country"],
+    var_name="Year",
+    value_name="Population"
+).sort_values(by=["Country", "Year"])
+
+# Joining the two datasets using 'merge' into a new dataframe 'child_mort_pop_combined'
+
+# Adding a new dataframe 'child_mort_pop_combined'
+
+child_mort_pop_combined = pd.merge(child_mort_long, under_five_pop_long, on=["Country", "Year"], how="outer")
+
+# Convert year to numeric using pd.to_numeric
+
+child_mort_pop_combined["Year"] = pd.to_numeric(child_mort_pop_combined["Year"], errors="coerce")
+
+# Creating a new dataframe with the range in years 1990 - 2020.
+
+# Querying for the years
+child_mort_pop_combined_1990_2020 = child_mort_pop_combined[child_mort_pop_combined["Year"].between(1990, 2020)]
+
+
+# Querying my selected 5 countries in a new dataframe also displaying the range in years from 1990 to 2020.
+
+child_mort_pop_combined_subset = child_mort_pop_combined_1990_2020.query("Country.isin(['Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile'])")
+
+
+# Subset the data to include `name`, `2010`, and `2020` columns only.
+table_df = child_mort_raw[["Country", "2010", "2020"]]
+
+# Calculate difference of mortality rate between 2010 and 2020
+
+table_df["Absolute Change"] = table_df["2010"] - table_df["2020"]
+
+# Calculate relative change as the absolute change in mortality divided by 2010 rates.
+
+table_df["Relative Change"] = table_df["2010"] / table_df["2020"] * 100
+
+# Round to 0 decimal places and adding a % sign to the the relative change.
+
+table_df["Relative Change"] = table_df["Relative Change"].round(0).astype(str) + "%"
+
+
+# Creating a line chart. 
+
+fig_chart = px.line(
+    child_mort_pop_combined_subset,
+    x="Year",
+    y="Deaths",
+    markers=True,
+    color="Country"
+)
+
+
+
+```
+
+
+# Home
+
+## Row {height="50%"}
+
+## Row
+
+**STEPS USED IN CODING**
+
+Using 'drop' to remove a column.
+
+Using 'rename' to rename 'name' to 'Country'
+
+Reshape Data
+
+Converting the wide data to long format.
+
+Reshaping the *child_mort_raw* dataset by converting the columns that represent different years into a new column called *year*-
+
+Using the *melt* function to reshape the dataset.
+
+Applying the same method to convert columns to long format for 'under five pop' dataset
+
+Joining the two datasets using the *merge* method.
+
+Both datasets are in the long format to be joined.
+
+Both are merged with 'outer' to keep much information as possible.
+
+The combined datasets will have some missing values from year 1800 onwards. A query method could be used to filter a few countries and a range of years.
+
+Quering. Selecting a few countries and a range of years.
+
+Query for years between 1990 and 2020 (that is 1990, 1991, ..., 2019, 2020)
+
+
+# Value Boxes
+
+```{python}
+
+child_mort_pop_combined = pd.DataFrame()
+num_cols = child_mort_pop_combined.shape[1]
+num_rows = child_mort_pop_combined.shape[0]
+```
+
+
+## {height="40%"}
+
+::: {.valuebox title="Number of Columns" color="primary" icon="heart"}
+`{python} num_cols`
+
+Few lines
+:::
+
+::: {.valuebox title="Number of Rows" color="secondary" icon="activity" }
+`{python} num_rows`
+
+Many rows
+:::
+
+::: {.valuebox title="Medium Number" color="success" icon="bar-chart"}
+2
+:::
+
+## Row 1 {height="30%"}
+Descrption
+
+
+## Row 2 {height="60%"}
+
+### {width=70%}
+
+
+```{python}
+print(2 * 2)
+# Descrption
+
+```
+
+### {width=40%}
+
+```{python}
+print(3 + 3)
+```
+
+
+
+# Table Section
+Displaying the raw data.
+
+```{python}
+child_mort_raw
+```
+
+
+Displaying the interactive table with itables:
+
+```{python}
+
+show(table_df)
+
+```
+
+
+
+# Chart Section
+
+```{python}
+
+
+```
+
+
+# About
+
+**Goal**
+
+In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).
+
+The goal is to clean and merge these raw datasets.
+
+The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:
+
+- First Indicator Analysis
+- Second Indicator Analysis
+- Relationship between the two indicators. No statistical analysis is required; this can be purely descriptive/graphical.
+
+**Data Import**
+
+I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.
+
+1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).
+
+According to Gapminder description, child mortality is the probability of dying between birth and exactly five years of age expressed in 1000 live births.
+
+2. **Under Five Population**. (*data/u5pop.csv*).
+
+According to Gapminder description, is the total number of children, aged 0-4 years old.
+
+Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure.
+
+```{python}
+child_mort_pop_combined
+```
+
+```{python}
+# Create the map using plotly express with a blue color scale
+map_fig = px.choropleth(
+    child_mort_pop_combined,
+    locations="Population",
+    color="Deaths",
+    hover_name="Country",
+    title="Map of Countries with Child Mortality",
+    color_continuous_scale="Blues",
+).update_layout(coloraxis_showscale=False)
+map_fig
+```
+
+
+```{python}
+
+# Create the map using plotly express with a blue color scale
+map_fig = px.choropleth(
+    child_mort_pop_combined,
+    locations="Country",          # Must point to the column with country names or ISO codes
+    locationmode="country names", # Tells plotly to interpret locations as country names
+    color="Deaths",               # The metric driving the color scale
+    hover_name="Country",         # Shows the country name clearly on hover
+    title="Map of Countries with Child Mortality",
+    color_continuous_scale="Blues",
+)
+
+map_fig.update_layout(coloraxis_showscale=False)
+map_fig
+```

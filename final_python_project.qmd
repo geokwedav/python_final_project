@@ -1,0 +1,263 @@
+---
+title: "Python Workshop Final Project: Table, Map, and Chart"
+author: "George Davis"
+format: dashboard
+---
+
+## Introduction
+
+In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).
+
+The goal is to clean and merge these raw datasets.
+
+The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:
+
+- First Indicator Analysis
+- Second Indicator Analysis
+- Relationship between the two indicators. No statistical analysis is required; this can be purely descriptive/graphical.
+
+
+## Load Libraries 
+
+```{python}
+import pandas as pd
+import plotly.express as px
+from itables import show 
+
+```
+
+
+## Data Import
+
+I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.
+
+1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).
+
+According to Gapminder description, child mortality is the probability of dying between birth and exactly five years of age expressed in 1000 live births.
+
+2. **Under Five Population**. (*data/u5pop.csv*).
+
+According to Gapminder description, is the total number of children, aged 0-4 years old.
+
+## Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure.
+
+```{python}
+# Load raw data from specified paths: child mortality
+
+child_mort_raw = pd.read_csv("data/child_mortality_0_5_year_olds_dying_per_1000_born.csv")
+
+# Applying 'drop' to remove the *geo* column and keeping the dataframe.
+# child_mort_raw = child_mort_raw.drop(columns=["geo"])#
+
+```
+
+### Using 'drop' to remove a column.
+
+```{python}
+# Load raw data from specified paths: under five population
+
+under_five_pop_raw = pd.read_csv("data/u5pop.csv")
+
+# Applying 'drop' to remove the *geo* column and keeping the dataframe.
+# under_five_pop_raw = under_five_pop_raw.drop(columns=["geo"])
+
+```
+
+```{python}
+under_five_pop_raw
+```
+
+### Using 'rename' to rename 'name' to 'country'
+
+```{python}
+#Keeping the renaming changes in the dataframe
+
+child_mort_raw = child_mort_raw.rename(columns={"name": "country"})
+
+```
+
+```{python}
+# Keeping the renaming changes in the dataframe.
+under_five_pop_raw = under_five_pop_raw.rename(columns={"name": "country"})
+
+```
+
+
+```{python}
+
+```
+
+
+## Reshape Data
+
+Converting the wide data to long format.
+
+Reshaping the *child_mort_raw* dataset by converting the columns that represent different years into a new column called *year*-
+
+Using the *melt* function to reshape the dataset.
+
+
+```{python}
+
+# Melt from wide to long format and adding a new dataframe 'child_mort_long'
+
+child_mort_long = child_mort_raw.melt(
+    id_vars=["geo", "country"],
+    var_name="year",
+    value_name="deaths"
+).sort_values(by=["country", "year"])
+child_mort_long
+```
+
+Applying the same method to convert columns to long format for 'under five pop' dataset
+
+```{python}
+
+# Melt from wide to long format and adding a new dataframe 'under_five_pop_long'
+
+under_five_pop_long = under_five_pop_raw.melt(
+    id_vars=["geo", "country"],
+    var_name="year",
+    value_name="population"
+).sort_values(by=["country", "year"])
+under_five_pop_long
+```
+
+## Joining the two datasets using the *merge* method.
+
+Both datasets are in the long format to be joined.
+
+Both are merged with 'outer' to keep much information as possible.
+
+```{python}
+# Joining the two datasets using 'merge' into a new dataframe 'child_mort_pop_combined'
+
+# Adding a new dataframe 'child_mort_pop_combined'
+
+child_mort_pop_combined = pd.merge(child_mort_long, under_five_pop_long, on=["country", "year"], how="outer")
+child_mort_pop_combined
+
+```
+
+
+The combined datasets will have some missing values from year 1800 onwards. A query method could be used to filter a few countries and a range of years.
+
+## Quering. Selecting a few countries and a range of years.
+
+```{python}
+
+# Convert year to numeric using pd.to_numeric
+
+child_mort_pop_combined["year"] = pd.to_numeric(child_mort_pop_combined["year"], errors="coerce")
+
+```
+
+
+```{python}
+
+# Creating a new dataframe with the range in years 2010 - 2020.
+
+# Querying for the years
+child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combined["year"].between(2010, 2020)]
+
+```
+
+Query for years between 2010 and 2020 (that is 2010, 2011, ..., 2019, 2020)
+
+
+```{python}
+
+# Querying my selected 5 countries in a new dataframe also displaying the range in years from 1990 to 2020.
+
+child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile'])")
+child_mort_pop_combined_subset
+```
+
+
+## Chart Section
+
+```{python}
+
+# Creating a line chart. 
+
+fig_chart = px.line(
+    child_mort_pop_combined_subset,
+    x="year",
+    y="deaths",
+    markers=True,
+    color="country"
+)
+fig_chart
+```
+
+
+## Table Section
+
+```{python}
+child_mort_raw
+```
+
+```{python}
+
+# Subset the data to include `country`, `2010`, and `2020` columns only.
+table_df = child_mort_raw[["country", "2010", "2020"]]
+
+# Calculate difference of mortality rate between 2010 and 2020
+
+table_df["Absolute Change"] = table_df["2010"] - table_df["2020"]
+
+# Calculate relative change as the absolute change in mortality divided by 2010 rates.
+
+table_df["Relative Change"] = table_df["2010"] / table_df["2020"] * 100
+
+# Round to 0 decimal places and adding a % sign to the the relative change.
+
+table_df["Relative Change"] = table_df["Relative Change"].round(0).astype(str) + "%"
+
+```
+
+Displaying the interactive table with itables:
+
+```{python}
+
+show(table_df)
+
+```
+
+
+
+
+# Page 1
+
+## Row {height="30%"}
+
+### Column {width="20%"}
+
+**Goal:** Create a choropleth map showing global emissions from 2010 to 2020.  
+
+```{python}
+
+```
+
+### Column ### Column {width="80%"}
+
+```{python}
+
+```
+
+
+
+## Row {height="70%"}
+```{python}
+
+```
+
+# Page 2
+
+
+```{python}
+
+```
+
+
+# Page 3

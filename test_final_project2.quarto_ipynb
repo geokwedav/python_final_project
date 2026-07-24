@@ -1,0 +1,327 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Python Workshop Final Project\"\n",
+        "author: \"George Davis\"\n",
+        "format: dashboard\n",
+        "---\n"
+      ],
+      "id": "71107a9c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import plotly.express as px\n",
+        "from itables import show \n",
+        "\n",
+        "# Load raw data from specified paths: child mortality\n",
+        "\n",
+        "child_mort_raw = pd.read_csv(\"data/child_mortality_0_5_year_olds_dying_per_1000_born.csv\")\n",
+        "\n",
+        "# Applying 'drop' to remove the *geo* column and keeping the dataframe.\n",
+        "child_mort_raw = child_mort_raw.drop(columns=[\"geo\"])\n",
+        "\n",
+        "# Load raw data from specified paths: under five population\n",
+        "\n",
+        "under_five_pop_raw = pd.read_csv(\"data/u5pop.csv\")\n",
+        "\n",
+        "# Applying 'drop' to remove the *geo* column and keeping the dataframe.\n",
+        "under_five_pop_raw = under_five_pop_raw.drop(columns=[\"geo\"])\n",
+        "\n",
+        "#Keeping the renaming changes in the dataframe\n",
+        "\n",
+        "child_mort_raw = child_mort_raw.rename(columns={\"name\": \"Country\"})\n",
+        "\n",
+        "# Keeping the renaming changes in the dataframe.\n",
+        "under_five_pop_raw = under_five_pop_raw.rename(columns={\"name\": \"Country\"})\n",
+        "\n",
+        "# Melt from wide to long format and adding a new dataframe 'child_mort_long'\n",
+        "\n",
+        "child_mort_long = child_mort_raw.melt(\n",
+        "    id_vars=[\"Country\"],\n",
+        "    var_name=\"Year\",\n",
+        "    value_name=\"Deaths\"\n",
+        ").sort_values(by=[\"Country\", \"Year\"])\n",
+        "\n",
+        "# Melt from wide to long format and adding a new dataframe 'under_five_pop_long'\n",
+        "\n",
+        "under_five_pop_long = under_five_pop_raw.melt(\n",
+        "    id_vars=[\"Country\"],\n",
+        "    var_name=\"Year\",\n",
+        "    value_name=\"Population\"\n",
+        ").sort_values(by=[\"Country\", \"Year\"])\n",
+        "\n",
+        "# Joining the two datasets using 'merge' into a new dataframe 'child_mort_pop_combined'\n",
+        "\n",
+        "# Adding a new dataframe 'child_mort_pop_combined'\n",
+        "\n",
+        "child_mort_pop_combined = pd.merge(child_mort_long, under_five_pop_long, on=[\"Country\", \"Year\"], how=\"outer\")\n",
+        "\n",
+        "# Convert year to numeric using pd.to_numeric\n",
+        "\n",
+        "child_mort_pop_combined[\"Year\"] = pd.to_numeric(child_mort_pop_combined[\"Year\"], errors=\"coerce\")\n",
+        "\n",
+        "# Creating a new dataframe with the range in years 2010 - 2020.\n",
+        "\n",
+        "# Querying for the years\n",
+        "child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combined[\"Year\"].between(1990, 2020)]\n",
+        "\n",
+        "\n",
+        "# Querying my selected 5 countries in a new dataframe also displaying the range in years from 1990 to 2020.\n",
+        "\n",
+        "child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query(\"Country.isin(['Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile'])\")\n",
+        "\n",
+        "\n",
+        "# Subset the data to include `name`, `2010`, and `2020` columns only.\n",
+        "table_df = child_mort_raw[[\"Country\", \"2010\", \"2020\"]]\n",
+        "\n",
+        "# Calculate difference of mortality rate between 2010 and 2020\n",
+        "\n",
+        "table_df[\"Absolute Change\"] = table_df[\"2010\"] - table_df[\"2020\"]\n",
+        "\n",
+        "# Calculate relative change as the absolute change in mortality divided by 2010 rates.\n",
+        "\n",
+        "table_df[\"Relative Change\"] = table_df[\"2010\"] / table_df[\"2020\"] * 100\n",
+        "\n",
+        "# Round to 0 decimal places and adding a % sign to the the relative change.\n",
+        "\n",
+        "table_df[\"Relative Change\"] = table_df[\"Relative Change\"].round(0).astype(str) + \"%\"\n",
+        "\n",
+        "\n",
+        "# Creating a line chart. \n",
+        "\n",
+        "fig_chart = px.line(\n",
+        "    child_mort_pop_combined_subset,\n",
+        "    x=\"Year\",\n",
+        "    y=\"Deaths\",\n",
+        "    markers=True,\n",
+        "    color=\"Country\"\n",
+        ")\n"
+      ],
+      "id": "f4fa9292",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Home\n",
+        "\n",
+        "## Row {height=\"50%\"}\n",
+        "\n",
+        "## Row\n",
+        "\n",
+        "**STEPS USED IN CODING**\n",
+        "\n",
+        "Using 'drop' to remove a column.\n",
+        "\n",
+        "Using 'rename' to rename 'name' to 'Country'\n",
+        "\n",
+        "Reshape Data\n",
+        "\n",
+        "Converting the wide data to long format.\n",
+        "\n",
+        "Reshaping the *child_mort_raw* dataset by converting the columns that represent different years into a new column called *year*-\n",
+        "\n",
+        "Using the *melt* function to reshape the dataset.\n",
+        "\n",
+        "Applying the same method to convert columns to long format for 'under five pop' dataset\n",
+        "\n",
+        "Joining the two datasets using the *merge* method.\n",
+        "\n",
+        "Both datasets are in the long format to be joined.\n",
+        "\n",
+        "Both are merged with 'outer' to keep much information as possible.\n",
+        "\n",
+        "The combined datasets will have some missing values from year 1800 onwards. A query method could be used to filter a few countries and a range of years.\n",
+        "\n",
+        "Quering. Selecting a few countries and a range of years.\n",
+        "\n",
+        "Query for years between 1990 and 2020 (that is 1990, 1991, ..., 2019, 2020)\n",
+        "\n",
+        "\n",
+        "# Value Boxes"
+      ],
+      "id": "05c3bd95"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# child_mort_pop_combined = pd.DataFrame()\n",
+        "num_cols = child_mort_pop_combined.shape[1]\n",
+        "num_rows = child_mort_pop_combined.shape[0]"
+      ],
+      "id": "11d4118d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## {height=\"40%\"}\n",
+        "\n",
+        "::: {.valuebox title=\"Number of Columns\" color=\"primary\" icon=\"heart\"}\n",
+        "`{python} num_cols`\n",
+        "\n",
+        "Few lines\n",
+        ":::\n",
+        "\n",
+        "::: {.valuebox title=\"Number of Rows\" color=\"secondary\" icon=\"activity\" }\n",
+        "`{python} num_rows`\n",
+        "\n",
+        "Many rows\n",
+        ":::\n",
+        "\n",
+        "::: {.valuebox title=\"Medium Number\" color=\"success\" icon=\"bar-chart\"}\n",
+        "2\n",
+        ":::\n",
+        "\n",
+        "## Row 1 {height=\"30%\"}\n",
+        "Descrption\n",
+        "\n",
+        "\n",
+        "## Row 2 {height=\"60%\"}\n",
+        "\n",
+        "### {width=70%}\n"
+      ],
+      "id": "c3e92b7e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(2 * 2)\n",
+        "# Descrption"
+      ],
+      "id": "841c3f87",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### {width=40%}"
+      ],
+      "id": "bb698239"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "print(3 + 3)"
+      ],
+      "id": "e1939a39",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Table Section\n",
+        "Displaying the raw data."
+      ],
+      "id": "447a836b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "child_mort_raw"
+      ],
+      "id": "1f6eff51",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Displaying the interactive table with itables:"
+      ],
+      "id": "e24629a8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "show(table_df)"
+      ],
+      "id": "04aa5d35",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Chart Section"
+      ],
+      "id": "e12ec9e0"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# About\n",
+        "\n",
+        "**Goal**\n",
+        "\n",
+        "In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).\n",
+        "\n",
+        "The goal is to clean and merge these raw datasets.\n",
+        "\n",
+        "The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:\n",
+        "\n",
+        "- First Indicator Analysis\n",
+        "- Second Indicator Analysis\n",
+        "- Relationship between the two indicators. No statistical analysis is required; this can be purely descriptive/graphical.\n",
+        "\n",
+        "**Data Import**\n",
+        "\n",
+        "I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.\n",
+        "\n",
+        "1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).\n",
+        "\n",
+        "According to Gapminder description, child mortality is the probability of dying between birth and exactly five years of age expressed in 1000 live births.\n",
+        "\n",
+        "2. **Under Five Population**. (*data/u5pop.csv*).\n",
+        "\n",
+        "According to Gapminder description, is the total number of children, aged 0-4 years old.\n",
+        "\n",
+        "Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure."
+      ],
+      "id": "52753946"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Create the map using plotly express with a blue color scale"
+      ],
+      "id": "4dba062a",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "c:\\Users\\piano\\Documents\\GitHub\\python_final_project\\.venv\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
