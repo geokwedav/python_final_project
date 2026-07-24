@@ -64,9 +64,9 @@ child_mort_pop_combined["year"] = pd.to_numeric(child_mort_pop_combined["year"],
 # Querying for the years
 child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combined["year"].between(2010, 2020)]
 
-# Querying my selected 5 countries in a new dataframe also displaying the range in years from 1990 to 2020.
+# Querying my selected a few countries in a new dataframe also displaying the range in years from 2010 to 2020.
 
-child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile'])")
+child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Lesotho', 'Madagascar', 'Finla','Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile', 'Canada', 'USA', 'Jamaica', 'Bahamas', 'Russia', 'Latvia', 'Nigeria', 'France', 'New Zealand', 'Venezuela', 'Pakistan', 'Cuba', 'Poland', 'Liberia', 'Morocco', 'Ethiopia', 'Sudan', 'Uganda', 'Ukraine', 'Uruguay', 'Ecuador'])")
 
 # Creating a line chart. 
 
@@ -125,15 +125,20 @@ bar_fig = px.bar(
 ).update_layout(coloraxis_showscale=False)
 
 
-# Create the map using plotly express with a blue color scale
+# Create the map using plotly express
+
+# Convert the existing ISO3 codes to uppercase
+child_mort_pop_combined_subset["geo_x"] = child_mort_pop_combined_subset["geo_y"].str.upper()
+
 map_fig = px.choropleth(
     child_mort_pop_combined_subset,
-    locations="deaths",
+    locations="geo_x",
     color="country",
-    hover_name="population",
-    title="Map of Countries with Child Mortality Rates",
-    color_continuous_scale="Blues",
-).update_layout(coloraxis_showscale=False)
+    hover_name="geo_y",
+    animation_frame="year",
+    title="Child Mortality Rates (2010-2020)",
+)
+
 ```
 
 
@@ -239,6 +244,8 @@ fig_chart.show()
 
 
 ```{python}
+
+
 country_fig = px.bar(
     child_mort_pop_combined_subset,
     x="year",
@@ -257,11 +264,13 @@ country_fig = px.bar(
 country_fig
 ```
 
+
+
 ### Column {width="20%"}
 
-Africa shows markedly lower life expectancy figures compared to other continents, reflecting significant developmental challenges.
+From the 5 selected countries, Afghanistan and Ghana shows to have high child mortality rates from 2010. 
 
-Europe and Oceania demonstrate the most consistently high life expectancies, while Asia and the Americas show greater variability, indicating diverse development stages within these regions.
+The rates slowly declines, perhaps due to immunisation practices, such as polio, for children and aggressive immunization campagins against childhood diseases.
 
 
 
@@ -271,7 +280,7 @@ Europe and Oceania demonstrate the most consistently high life expectancies, whi
 
 In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).
 
-The goal is to clean and merge these raw datasets.
+The goal is to clean and merge these raw datasets and produce tables and charts with the data.
 
 The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:
 
