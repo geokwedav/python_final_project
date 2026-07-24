@@ -10,7 +10,7 @@
         "format: dashboard\n",
         "---\n"
       ],
-      "id": "6af0939b"
+      "id": "cd7ac765"
     },
     {
       "cell_type": "code",
@@ -101,26 +101,9 @@
         "\n",
         "# Round to 0 decimal places and adding a % sign to the the relative change.\n",
         "\n",
-        "table_df[\"Relative Change\"] = table_df[\"Relative Change\"].round(0).astype(str) + \"%\"\n"
-      ],
-      "id": "d26af974",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
-        "child_mort_pop_combined_2010_2020"
-      ],
-      "id": "c48f1f33",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
+        "table_df[\"Relative Change\"] = table_df[\"Relative Change\"].round(0).astype(str) + \"%\"\n",
+        "\n",
+        "\n",
         "child_mort_pop_combined_2010_2020 = child_mort_pop_combined_2010_2020.query(\"year == 2010\")\n",
         "\n",
         "# Compute highest child mortality rates\n",
@@ -135,16 +118,21 @@
         "\n",
         "# Compute average (population-weighted) child mortality\n",
         "weighted_mean = (child_mort_pop_combined_2010_2020[\"deaths\"] * child_mort_pop_combined_2010_2020[\"population\"]).sum() / child_mort_pop_combined_2010_2020[\"population\"].sum()\n",
-        "average_child_mortality_value = round(weighted_mean, 1)"
-      ],
-      "id": "9fae656e",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
+        "average_child_mortality_value = round(weighted_mean, 1)\n",
+        "\n",
+        "\n",
+        "# Largest 10 countries with child mortality rates (bar chart) with a blue color scale\n",
+        "top_10 = child_mort_pop_combined_2010_2020.nlargest(10, \"population\").sort_values(\"deaths\", ascending=True)\n",
+        "bar_fig = px.bar(\n",
+        "    top_10,\n",
+        "    x=\"deaths\",\n",
+        "    y=\"country\",\n",
+        "    title=\"Child Mortality Rates in 10 Largest Countries\",\n",
+        "    color=\"deaths\",\n",
+        "    color_continuous_scale=\"Blues\",\n",
+        ").update_layout(coloraxis_showscale=False)\n",
+        "\n",
+        "\n",
         "# Create the map using plotly express with a blue color scale\n",
         "map_fig = px.choropleth(\n",
         "    child_mort_pop_combined_subset,\n",
@@ -155,46 +143,7 @@
         "    color_continuous_scale=\"Blues\",\n",
         ").update_layout(coloraxis_showscale=False)"
       ],
-      "id": "de18d0eb",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
-        "map_fig"
-      ],
-      "id": "4c46b0bb",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
-        "# Largest 10 countries with child mortality rates (bar chart) with a blue color scale\n",
-        "top_10 = child_mort_pop_combined_2010_2020.nlargest(20, \"population\").sort_values(\"deaths\", ascending=True)\n",
-        "bar_fig = px.bar(\n",
-        "    top_10,\n",
-        "    x=\"deaths\",\n",
-        "    y=\"country\",\n",
-        "    title=\"Child Mortality Rates in 10 Largest Countries\",\n",
-        "    color=\"deaths\",\n",
-        "    color_continuous_scale=\"Blues\",\n",
-        ").update_layout(coloraxis_showscale=False)"
-      ],
-      "id": "e46ebe2e",
-      "execution_count": null,
-      "outputs": []
-    },
-    {
-      "cell_type": "code",
-      "metadata": {},
-      "source": [
-        "bar_fig"
-      ],
-      "id": "66de725e",
+      "id": "a3f46675",
       "execution_count": null,
       "outputs": []
     },
@@ -202,44 +151,9 @@
       "cell_type": "markdown",
       "metadata": {},
       "source": [
-        "# Home\n",
-        "\n",
-        "## Row {height=\"50%\"}\n",
-        "\n",
-        "## Row\n",
-        "\n",
-        "**STEPS USED IN CODING**\n",
-        "\n",
-        "Using 'drop' to remove a column.\n",
-        "\n",
-        "Using 'rename' to rename 'name' to 'Country'\n",
-        "\n",
-        "Reshape Data\n",
-        "\n",
-        "Converting the wide data to long format.\n",
-        "\n",
-        "Reshaping the *child_mort_raw* dataset by converting the columns that represent different years into a new column called *year*-\n",
-        "\n",
-        "Using the *melt* function to reshape the dataset.\n",
-        "\n",
-        "Applying the same method to convert columns to long format for 'under five pop' dataset\n",
-        "\n",
-        "Joining the two datasets using the *merge* method.\n",
-        "\n",
-        "Both datasets are in the long format to be joined.\n",
-        "\n",
-        "Both are merged with 'outer' to keep much information as possible.\n",
-        "\n",
-        "The combined datasets will have some missing values from year 1800 onwards. A query method could be used to filter a few countries and a range of years.\n",
-        "\n",
-        "Quering. Selecting a few countries and a range of years.\n",
-        "\n",
-        "Query for years between 1990 and 2020 (that is 1990, 1991, ..., 2019, 2020)\n",
-        "\n",
-        "\n",
-        "# Value Boxes"
+        "# Home "
       ],
-      "id": "0a5d5b5a"
+      "id": "96611e20"
     },
     {
       "cell_type": "code",
@@ -249,7 +163,7 @@
         "num_cols = child_mort_pop_combined.shape[1]\n",
         "num_rows = child_mort_pop_combined.shape[0]"
       ],
-      "id": "49f300ae",
+      "id": "8f21c822",
       "execution_count": null,
       "outputs": []
     },
@@ -275,25 +189,26 @@
         "2\n",
         ":::\n",
         "\n",
-        "## Row 1 {height=\"30%\"}\n",
-        "Descrption.\n",
+        "## Row 1 {height=\"15%\"}\n",
+        "The map below displays the 5 selected with a distribution of child mportality per country.\n",
+        "\n",
+        "The bar chart displays 10 selected countries with a distribution of mortality rates. \n",
         "\n",
         "\n",
         "## Row 2 {height=\"60%\"}\n",
         "\n",
         "### {width=70%}\n"
       ],
-      "id": "2635af56"
+      "id": "1e226dbe"
     },
     {
       "cell_type": "code",
       "metadata": {},
       "source": [
-        "print(2 * 2)\n",
-        "print(\"map goes here\")\n",
-        "# Descrption"
+        "# Map goes here\n",
+        "map_fig"
       ],
-      "id": "012dbe24",
+      "id": "73ac753d",
       "execution_count": null,
       "outputs": []
     },
@@ -301,17 +216,17 @@
       "cell_type": "markdown",
       "metadata": {},
       "source": [
-        "### {width=40%}"
+        "### {width=40%}\n"
       ],
-      "id": "5d005888"
+      "id": "44a5363f"
     },
     {
       "cell_type": "code",
       "metadata": {},
       "source": [
-        "print(3 + 3)"
+        "bar_fig"
       ],
-      "id": "b2daf77a",
+      "id": "c84c1151",
       "execution_count": null,
       "outputs": []
     },
@@ -327,7 +242,7 @@
         "\n",
         "- Relative change displays as a change in percentage from the starting figure.\n"
       ],
-      "id": "e83823c2"
+      "id": "367ff4e0"
     },
     {
       "cell_type": "code",
@@ -336,7 +251,7 @@
         "import itables\n",
         "itables.show(table_df, buttons=[\"csvHtml5\"]) "
       ],
-      "id": "7e4bae51",
+      "id": "f60474c2",
       "execution_count": null,
       "outputs": []
     },
@@ -346,7 +261,7 @@
       "source": [
         "# Chart Section"
       ],
-      "id": "a426c933"
+      "id": "c5f7dd53"
     },
     {
       "cell_type": "code",
@@ -354,7 +269,7 @@
       "source": [
         "fig_chart.show()"
       ],
-      "id": "83b0ebe2",
+      "id": "cfa5a505",
       "execution_count": null,
       "outputs": []
     },
@@ -379,7 +294,7 @@
         "\n",
         "country_fig"
       ],
-      "id": "df6ff042",
+      "id": "d072cf1c",
       "execution_count": null,
       "outputs": []
     },
@@ -387,6 +302,9 @@
       "cell_type": "markdown",
       "metadata": {},
       "source": [
+        "### Column {width=\"20%\"}\n",
+        "\n",
+        "\n",
         "# About\n",
         "\n",
         "**Goal**\n",
@@ -415,7 +333,7 @@
         "\n",
         "Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure."
       ],
-      "id": "f2dd6430"
+      "id": "9da55ea6"
     },
     {
       "cell_type": "code",
@@ -423,7 +341,7 @@
       "source": [
         "# Create the map using plotly express with a blue color scale"
       ],
-      "id": "10c161be",
+      "id": "7209d93f",
       "execution_count": null,
       "outputs": []
     }

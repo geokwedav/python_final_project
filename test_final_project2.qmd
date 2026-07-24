@@ -219,12 +219,24 @@ import itables
 itables.show(table_df, buttons=["csvHtml5"]) 
 ```
 
+
+
 # Chart Section
+
+## Row 1 {height="50%"}
+
+### Column {width="80%"}
 
 ```{python}
 
 fig_chart.show()
 ```
+
+
+## Row 2 {height="70%"}
+
+### Column {width="80%"}
+
 
 ```{python}
 country_fig = px.bar(
@@ -244,6 +256,13 @@ country_fig = px.bar(
 
 country_fig
 ```
+
+### Column {width="20%"}
+
+Africa shows markedly lower life expectancy figures compared to other continents, reflecting significant developmental challenges.
+
+Europe and Oceania demonstrate the most consistently high life expectancies, while Asia and the Americas show greater variability, indicating diverse development stages within these regions.
+
 
 
 # About
