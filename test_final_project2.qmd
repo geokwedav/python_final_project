@@ -66,7 +66,7 @@ child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combi
 
 # Querying my selected a few countries in a new dataframe also displaying the range in years from 2010 to 2020.
 
-child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Lesotho', 'Madagascar', 'Finla','Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile', 'Canada', 'USA', 'Jamaica', 'Bahamas', 'Russia', 'Latvia', 'Nigeria', 'France', 'New Zealand', 'Venezuela', 'Pakistan', 'Cuba', 'Poland', 'Liberia', 'Morocco', 'Ethiopia', 'Sudan', 'Uganda', 'Ukraine', 'Uruguay', 'Ecuador'])")
+child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Ghana', 'Nigeria', 'Liberia', 'Senegal','Sierra Leone'])")
 
 # Creating a line chart. 
 
@@ -77,6 +77,7 @@ fig_chart = px.line(
     markers=True,
     color="country"
 )
+fig_chart.update_layout(showlegend=False)
 
 # Table section
 
@@ -125,30 +126,21 @@ bar_fig = px.bar(
 ).update_layout(coloraxis_showscale=False)
 
 
-# Create the map using plotly express
+# Create the map using plotly express. Convert the existing ISO3 codes to uppercase
 
-# Convert the existing ISO3 codes to uppercase
 child_mort_pop_combined_subset["geo_x"] = child_mort_pop_combined_subset["geo_y"].str.upper()
 
 map_fig = px.choropleth(
     child_mort_pop_combined_subset,
     locations="geo_x",
     color="country",
-    hover_name="geo_y",
+    hover_name="deaths",
     animation_frame="year",
     title="Child Mortality Rates (2010-2020)",
 )
+map_fig.update_layout(showlegend=False)
 
 ```
-
-
-
-```{python}
-
-
-
-```
-
 
 
 
@@ -156,24 +148,24 @@ map_fig = px.choropleth(
 
 ```{python}
 
-# child_mort_pop_combined = pd.DataFrame()
-num_cols = child_mort_pop_combined.shape[1]
-num_rows = child_mort_pop_combined.shape[0]
+# child_mort_pop_combined_subset = pd.DataFrame()
+num_cols = child_mort_pop_combined_subset.shape[1]
+num_rows = child_mort_pop_combined_subset.shape[0]
 ```
 
 
-## {height="40%"}
+## {height="20%"}
 
 ::: {.valuebox title="Number of Columns" color="primary" icon="heart"}
 `{python} num_cols`
 
-Few lines
+some test here
 :::
 
 ::: {.valuebox title="Number of Rows" color="secondary" icon="activity" }
 `{python} num_rows`
 
-Many rows
+test here
 :::
 
 ::: {.valuebox title="Medium Number" color="success" icon="bar-chart"}
@@ -183,10 +175,10 @@ Many rows
 ## Row 1 {height="15%"}
 The map below displays the 5 selected with a distribution of child mportality per country.
 
-The bar chart displays 10 selected countries with a distribution of mortality rates. 
+The bar chart on the right panel displays 10 selected countries with a distribution of mortality rates. 
 
 
-## Row 2 {height="60%"}
+## Row 2 {height="70%"}
 
 ### {width=70%}
 
@@ -228,7 +220,7 @@ itables.show(table_df, buttons=["csvHtml5"])
 
 # Chart Section
 
-## Row 1 {height="50%"}
+## Row 1 {height="70%"}
 
 ### Column {width="80%"}
 
@@ -236,6 +228,14 @@ itables.show(table_df, buttons=["csvHtml5"])
 
 fig_chart.show()
 ```
+
+### Column {width="30%"}
+
+In the line chart, from the 5 selected countries, Sierra Leone and Nigeriaa shows to have high child mortality rates from 2010. 
+
+Senegal seems to have the lowest death rates from 2010 to 2020 perhaps due to rapid child immunization campaigns.
+
+The rates slowly declines, perhaps due to immunisation practices, such as polio, for children and aggressive immunization campagins against childhood diseases.
 
 
 ## Row 2 {height="70%"}
@@ -258,7 +258,7 @@ country_fig = px.bar(
     hover_data=["country"],  # This adds country names to hover info
     color_discrete_sequence=px.colors.sequential.Turbo,  # Built-in Blues palette
 ).update_layout(
-    showlegend=True, xaxis_title="Year", yaxis_title="Child Mortality"
+    showlegend=False, xaxis_title="Year", yaxis_title="Child Mortality"
 )
 
 country_fig
@@ -266,9 +266,11 @@ country_fig
 
 
 
-### Column {width="20%"}
+### Column {width="30%"}
 
-From the 5 selected countries, Afghanistan and Ghana shows to have high child mortality rates from 2010. 
+In the bar chart, from the 5 selected countries, Sierra Leone and Nigeriaa shows to have high child mortality rates from 2010. 
+
+Senegal seems to have the lowest death rates from 2010 to 2020 perhaps due to rapid child immunization campaigns.
 
 The rates slowly declines, perhaps due to immunisation practices, such as polio, for children and aggressive immunization campagins against childhood diseases.
 
@@ -301,8 +303,3 @@ According to Gapminder description, child mortality is the probability of dying 
 According to Gapminder description, is the total number of children, aged 0-4 years old.
 
 Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure.
-
-```{python}
-# Create the map using plotly express with a blue color scale
-
-```
