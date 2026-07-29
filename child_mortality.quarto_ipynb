@@ -14,7 +14,7 @@
         "        scrolling: false\n",
         "---\n"
       ],
-      "id": "da20d869"
+      "id": "e461e2fa"
     },
     {
       "cell_type": "code",
@@ -146,9 +146,11 @@
         "    top_8,\n",
         "    x=\"deaths\",\n",
         "    y=\"country\",\n",
+        "    labels={\"deaths\": \"Deaths (2010-2020)\", \"country\": \"Countries\"},\n",
         "    title=\"Child Mortality Rates in 8 Largest Countries\",\n",
         "    color=\"deaths\",\n",
         "    color_continuous_scale=\"Greens\",\n",
+        "    text_auto=True\n",
         ").update_layout(coloraxis_showscale=False)\n",
         "\n",
         "\n",
@@ -166,7 +168,7 @@
         "    title=\"Child Mortality Rates (2010-2020) for Selected Countries\",\n",
         ").update_layout(showlegend=False)"
       ],
-      "id": "b0e6e5f4",
+      "id": "d6f7fe3e",
       "execution_count": null,
       "outputs": []
     },
@@ -176,9 +178,9 @@
       "source": [
         "# Home \n",
         "\n",
-        "A final subsetted dataset lists countries, years, percentages of deaths per population between 2010-2020.\n"
+        "This report displays a final subsetted dataset list of priority countries that describes child mortality rates per country, between 2010-2020. The data below summarizes main information from the subsetted dataset. Subsequent pages will display plots and tables for absolute and relative changes, as well as plots displaying the selected priority countries.\n"
       ],
-      "id": "318d4430"
+      "id": "5f6e7619"
     },
     {
       "cell_type": "code",
@@ -189,7 +191,7 @@
         "num_cols = child_mort_pop_combined_2010_2020.shape[1]\n",
         "num_rows = child_mort_pop_combined_2010_2020.shape[0]"
       ],
-      "id": "c4bf4441",
+      "id": "a65eac94",
       "execution_count": null,
       "outputs": []
     },
@@ -214,7 +216,7 @@
         "\n",
         "::: {.valuebox title=\"Main Indicator\" color=\"success\" icon=\"exclamation-circle\"}\n",
         "\n",
-        "Child Mortality for under 5 population subsetted from 2010-2020\n",
+        "Child Mortality for under 5 population subsetted between 2010-2020\n",
         ":::\n",
         "\n",
         "\n",
@@ -230,7 +232,7 @@
         "\n",
         "### {width=80%}\n"
       ],
-      "id": "836fabc7"
+      "id": "b36e447e"
     },
     {
       "cell_type": "code",
@@ -239,7 +241,7 @@
         "# Map goes here\n",
         "map_fig # map comes here"
       ],
-      "id": "cdaca091",
+      "id": "0fde3031",
       "execution_count": null,
       "outputs": []
     },
@@ -249,7 +251,7 @@
       "source": [
         "### {width=40%}\n"
       ],
-      "id": "8c280d2e"
+      "id": "6f5b33c9"
     },
     {
       "cell_type": "code",
@@ -257,7 +259,7 @@
       "source": [
         "bar_fig # bar chart comes here"
       ],
-      "id": "0d39bcd2",
+      "id": "5961805d",
       "execution_count": null,
       "outputs": []
     },
@@ -270,21 +272,17 @@
         "## Row {height=\"13%\"}\n",
         "\n",
         "###\n",
-        "Relationship between death estimates in 5 selected first group of other populous countries: Philippines, Mexico, Egypt, China, Brazil.\n",
+        "Relationship between death estimates in 5 selected first group of other populous countries: Philippines, Mexico, Egypt, China, Brazil (2010-2020)\n",
         "\n",
         "###\n",
-        "test\n",
-        "Relationship between death estimates in 5 selected group of most populous countries: Pakistan, Nigeria, Indonesia, India, Bangladesh.\n",
+        "Relationship between death estimates in 5 selected group of most populous countries: Pakistan, Nigeria, Indonesia, India, Bangladesh (2010-2020)\n",
         "\n",
         "\n",
         "## Row  {height=\"70%\"}\n",
         "\n",
-        "\n",
-        "\n",
-        "\n",
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "9ade5df2"
+      "id": "1a087230"
     },
     {
       "cell_type": "code",
@@ -301,7 +299,7 @@
         "    title=\"Relationship Between Deaths in Other Populous Countries\",\n",
         "    x=\"year\", y=\"deaths\").update_layout(showlegend=False)"
       ],
-      "id": "f9ddf4ab",
+      "id": "062a5956",
       "execution_count": null,
       "outputs": []
     },
@@ -311,7 +309,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "4a896d87"
+      "id": "dadaefc7"
     },
     {
       "cell_type": "code",
@@ -328,7 +326,7 @@
         "    title=\"Relationship Between Deaths in Most Populous Countries\",\n",
         "    x=\"year\", y=\"deaths\").update_layout(showlegend=False)"
       ],
-      "id": "4c074c7f",
+      "id": "e98e72ae",
       "execution_count": null,
       "outputs": []
     },
@@ -351,7 +349,7 @@
         "\n",
         "### Column {width=\"80%\"}"
       ],
-      "id": "af38562b"
+      "id": "423352e4"
     },
     {
       "cell_type": "code",
@@ -360,7 +358,7 @@
         "import itables\n",
         "itables.show(table_df, buttons=[\"csvHtml5\"]) "
       ],
-      "id": "6163b471",
+      "id": "9b133afb",
       "execution_count": null,
       "outputs": []
     },
@@ -374,9 +372,13 @@
         "\n",
         "# Priority Countries\n",
         "\n",
+        "The 4 plots below displays child mortality rates in the priority countries, grouped in 2s.\n",
+        "\n",
+        "For example: the relationship between Nigeria and Egypt shows a wider gap, the former country with higher rates and the latter with lower rates. Nigeria can learn from Egypt the measures taken to reduce child mortality rates for Under 5 population.\n",
+        "\n",
         "## Row  {height=\"80%\"}\n"
       ],
-      "id": "a1319d5e"
+      "id": "edef15a5"
     },
     {
       "cell_type": "code",
@@ -390,7 +392,7 @@
         "    title=\"Philippines and Russa (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", barmode=\"group\").update_layout(showlegend=False)"
       ],
-      "id": "20d8ae1d",
+      "id": "d57f3160",
       "execution_count": null,
       "outputs": []
     },
@@ -400,7 +402,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "cf78893b"
+      "id": "361d165a"
     },
     {
       "cell_type": "code",
@@ -414,7 +416,7 @@
         "    title=\"Nigeria and Egypt (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", markers=True).update_layout(showlegend=False)"
       ],
-      "id": "10c89da9",
+      "id": "ab238d38",
       "execution_count": null,
       "outputs": []
     },
@@ -424,7 +426,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "5f69f172"
+      "id": "e07bf316"
     },
     {
       "cell_type": "code",
@@ -438,7 +440,7 @@
         "    title=\"Brazil and Mexico (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", size=\"population\").update_layout(showlegend=False)"
       ],
-      "id": "b191f403",
+      "id": "916c915a",
       "execution_count": null,
       "outputs": []
     },
@@ -448,7 +450,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "4671e157"
+      "id": "23c2b217"
     },
     {
       "cell_type": "code",
@@ -465,7 +467,7 @@
         "    color_discrete_sequence=[\"#1f77b4\", \"#ff7f0e\"]\n",
         ").update_layout(showlegend=False)"
       ],
-      "id": "452c16be",
+      "id": "726fee56",
       "execution_count": null,
       "outputs": []
     },
@@ -481,7 +483,7 @@
         "\n",
         "### Column {width=\"70%\"}\n"
       ],
-      "id": "68bc0d26"
+      "id": "885fcbad"
     },
     {
       "cell_type": "code",
@@ -505,7 +507,7 @@
         "\n",
         "box_fig"
       ],
-      "id": "2b0943ea",
+      "id": "f63a7de4",
       "execution_count": null,
       "outputs": []
     },
@@ -528,11 +530,9 @@
         "\n",
         "**Goal**\n",
         "\n",
-        "In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).\n",
+        "This data displays relationships between child mortality, and under 5 population (0-5 years) between 2010 to 2020.\n",
         "\n",
-        "The goal is to clean and merge these raw datasets and produce tables and charts with the data.\n",
-        "\n",
-        "The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:\n",
+        "The goal of this project is to produce a report with three pages:\n",
         "\n",
         "- First Indicator Analysis\n",
         "- Second Indicator Analysis\n",
@@ -540,7 +540,8 @@
         "\n",
         "**Data Import**\n",
         "\n",
-        "I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.\n",
+        "2 raw datasets were imported: 'child_mortality_0_5_years', and\n",
+        "'under 5 population' accessed from Gapminder Foundation.\n",
         "\n",
         "1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).\n",
         "\n",
@@ -548,11 +549,9 @@
         "\n",
         "2. **Under Five Population**. (*data/u5pop.csv*).\n",
         "\n",
-        "According to Gapminder description, is the total number of children, aged 0-4 years old.\n",
-        "\n",
-        "Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure."
+        "According to Gapminder description, is the total number of children, aged 0-4 years old.\n"
       ],
-      "id": "9a2e66ce"
+      "id": "7b441e51"
     }
   ],
   "metadata": {

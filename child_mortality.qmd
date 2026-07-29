@@ -443,4 +443,4 @@ According to Gapminder description, child mortality is the probability of dying 
 
 According to Gapminder description, is the total number of children, aged 0-4 years old.
 
-Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure.
+
