@@ -1,0 +1,468 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"test-Python Workshop Final Project\"\n",
+        "author: \"George Davis\"\n",
+        "format: \n",
+        "    dashboard:\n",
+        "        embed-resources: true\n",
+        "---\n"
+      ],
+      "id": "a452ac9a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "import plotly.express as px\n",
+        "from itables import show \n",
+        "\n",
+        "# Load raw data from specified paths: child mortality\n",
+        "\n",
+        "child_mort_raw = pd.read_csv(\"data/child_mortality_0_5_year_olds_dying_per_1000_born.csv\")\n",
+        "\n",
+        "# Applying 'drop' to remove the *geo* column and keeping the dataframe.\n",
+        "# child_mort_raw = child_mort_raw.drop(columns=[\"geo\"])#\n",
+        "\n",
+        "# Load raw data from specified paths: under five population\n",
+        "\n",
+        "under_five_pop_raw = pd.read_csv(\"data/u5pop.csv\")\n",
+        "\n",
+        "# Applying 'drop' to remove the *geo* column and keeping the dataframe.\n",
+        "# under_five_pop_raw = under_five_pop_raw.drop(columns=[\"geo\"])\n",
+        "\n",
+        "#Keeping the renaming changes in the dataframe\n",
+        "\n",
+        "child_mort_raw = child_mort_raw.rename(columns={\"name\": \"country\"})\n",
+        "\n",
+        "# Keeping the renaming changes in the dataframe.\n",
+        "under_five_pop_raw = under_five_pop_raw.rename(columns={\"name\": \"country\"})\n",
+        "\n",
+        "# Melt from wide to long format and adding a new dataframe 'child_mort_long'\n",
+        "\n",
+        "child_mort_long = child_mort_raw.melt(\n",
+        "    id_vars=[\"geo\", \"country\"],\n",
+        "    var_name=\"year\",\n",
+        "    value_name=\"deaths\"\n",
+        ").sort_values(by=[\"country\", \"year\"])\n",
+        "\n",
+        "# Melt from wide to long format and adding a new dataframe 'under_five_pop_long'\n",
+        "\n",
+        "under_five_pop_long = under_five_pop_raw.melt(\n",
+        "    id_vars=[\"geo\", \"country\"],\n",
+        "    var_name=\"year\",\n",
+        "    value_name=\"population\"\n",
+        ").sort_values(by=[\"country\", \"year\"])\n",
+        "\n",
+        "# Joining the two datasets using 'merge' into a new dataframe 'child_mort_pop_combined'\n",
+        "\n",
+        "# Adding a new dataframe 'child_mort_pop_combined'\n",
+        "\n",
+        "child_mort_pop_combined = pd.merge(child_mort_long, under_five_pop_long, on=[\"country\", \"year\"], how=\"outer\")\n",
+        "\n",
+        "# Convert year to numeric using pd.to_numeric\n",
+        "\n",
+        "child_mort_pop_combined[\"year\"] = pd.to_numeric(child_mort_pop_combined[\"year\"], errors=\"coerce\")\n",
+        "\n",
+        "# Creating a new dataframe with the range in years 2010 - 2020.\n",
+        "\n",
+        "# Querying for the years\n",
+        "child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combined[\"year\"].between(2010, 2020)]\n",
+        "\n",
+        "# Querying my selected a few countries in a new dataframe also displaying the range in years from 2010 to 2020.\n",
+        "\n",
+        "child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query(\"country.isin(['Nigeria', 'Congo, Dem.Rep.', 'Pakistan','Ethiopia', 'Tanzania', 'India', 'Bangladesh', 'Indonesia', 'Philippines', 'Egypt', 'Mexico', 'Brazil', 'China', 'Russia', 'USA'])\")\n",
+        "\n",
+        "# Creating a line chart. \n",
+        "\n",
+        "fig_chart = px.line(\n",
+        "    child_mort_pop_combined_subset,\n",
+        "    x=\"year\",\n",
+        "    y=\"deaths\",\n",
+        "    markers=True,\n",
+        "    color=\"country\"\n",
+        ").update_layout(showlegend=False)\n",
+        "\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Table section\n",
+        "\n",
+        "# Subset the data to include `country`, `2010`, and `2020` columns only.\n",
+        "table_df = child_mort_raw[[\"country\", \"2010\", \"2020\"]]\n",
+        "\n",
+        "# Calculate difference of mortality rate between 2010 and 2020\n",
+        "\n",
+        "table_df[\"Absolute Change\"] = table_df[\"2010\"] - table_df[\"2020\"]\n",
+        "\n",
+        "# Calculate relative change as the absolute change in mortality divided by 2010 rates.\n",
+        "\n",
+        "table_df[\"Relative Change\"] = table_df[\"2010\"] / table_df[\"2020\"] * 100\n",
+        "\n",
+        "# Round to 0 decimal places and adding a % sign to the the relative change.\n",
+        "\n",
+        "table_df[\"Relative Change\"] = table_df[\"Relative Change\"].round(0).astype(str) + \"%\"\n",
+        "\n",
+        "\n",
+        "child_mort_pop_combined_2010_2020 = child_mort_pop_combined_2010_2020.query(\"year == 2010\")\n",
+        "\n",
+        "# Compute highest child mortality rates\n",
+        "highest_row = child_mort_pop_combined_2010_2020.sort_values(\"deaths\", ascending=False).head(1).squeeze()\n",
+        "highest_child_mortality_country = highest_row[\"country\"]\n",
+        "highest_child_mortality_value = round(highest_row[\"deaths\"], 1)\n",
+        "\n",
+        "# Compute lowest child mortality rates\n",
+        "lowest_row = child_mort_pop_combined_2010_2020.sort_values(\"deaths\", ascending=True).head(1).squeeze()\n",
+        "lowest_child_mortality_country = lowest_row[\"country\"]\n",
+        "lowest_child_mortality_value = round(lowest_row[\"deaths\"], 1)\n",
+        "\n",
+        "# Compute average (population-weighted) child mortality\n",
+        "weighted_mean = (child_mort_pop_combined_2010_2020[\"deaths\"] * child_mort_pop_combined_2010_2020[\"population\"]).sum() / child_mort_pop_combined_2010_2020[\"population\"].sum()\n",
+        "average_child_mortality_value = round(weighted_mean, 1)\n",
+        "\n",
+        "\n",
+        "# Largest 15 countries with child mortality rates (bar chart) with a blue color scale\n",
+        "top_15 = child_mort_pop_combined_2010_2020.nlargest(15, \"population\").sort_values(\"deaths\", ascending=True)\n",
+        "bar_fig = px.bar(\n",
+        "    top_15,\n",
+        "    x=\"deaths\",\n",
+        "    y=\"country\",\n",
+        "    title=\"Child Mortality Rates in 15 Largest Countries\",\n",
+        "    color=\"deaths\",\n",
+        "    color_continuous_scale=\"Blues\",\n",
+        ").update_layout(coloraxis_showscale=False)\n",
+        "\n",
+        "\n",
+        "# Create the map using plotly express. Convert the existing ISO3 codes to uppercase.\n",
+        "\n",
+        "# I do not see the conversions.\n",
+        "\n",
+        "child_mort_pop_combined_subset[\"geo_x\"] = child_mort_pop_combined_subset[\"geo_y\"].str.upper()\n",
+        "\n",
+        "map_fig = px.choropleth(\n",
+        "    child_mort_pop_combined_subset,\n",
+        "    locations=\"geo_x\",\n",
+        "    color=\"country\",\n",
+        "    hover_name=\"deaths\",\n",
+        "    \n",
+        "    title=\"Child Mortality Rates (2010-2020)\",\n",
+        ").update_layout(showlegend=False)"
+      ],
+      "id": "4a3ba3c2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Home "
+      ],
+      "id": "f7f2f7b6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# child_mort_pop_combined_subset = pd.DataFrame()\n",
+        "num_cols = child_mort_pop_combined_subset.shape[1]\n",
+        "num_rows = child_mort_pop_combined_subset.shape[0]"
+      ],
+      "id": "93d0df6d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Row  {height=\"30%\"}\n",
+        "\n",
+        "\n",
+        "::: {.valuebox title=\"Number of Columns\" color=\"primary\" icon=\"heart\"}\n",
+        "`{python} num_cols`\n",
+        "\n",
+        "some test here\n",
+        ":::\n",
+        "\n",
+        "::: {.valuebox title=\"Number of Rows\" color=\"secondary\" icon=\"activity\" }\n",
+        "`{python} num_rows`\n",
+        "\n",
+        "test here\n",
+        ":::\n",
+        "\n",
+        "::: {.valuebox title=\"Medium Number\" color=\"success\" icon=\"bar-chart\"}\n",
+        "2\n",
+        ":::\n",
+        "\n",
+        "## Row  {height=\"15%\"}\n",
+        "The map below displays the 5 selected with a distribution of child mportality per country.\n",
+        "\n",
+        "The bar chart on the right panel displays 10 selected countries with a distribution of mortality rates. \n",
+        "\n",
+        "\n",
+        "## Row  {height=\"80%\"}\n",
+        "\n",
+        "### {width=80%}\n"
+      ],
+      "id": "6256332c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Map goes here\n",
+        "map_fig # map comes here"
+      ],
+      "id": "e01270e8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### {width=40%}\n"
+      ],
+      "id": "46d155a5"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "bar_fig # bar chart comes here"
+      ],
+      "id": "3e027eee",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Table Section\n",
+        "\n",
+        "Visualization comes here\n",
+        "\n",
+        "## Row  {height=\"70%\"}\n"
+      ],
+      "id": "c58ca228"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"80%\"}\n"
+      ],
+      "id": "55f4d6c8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Calculate difference of mortality rate between 2010 and 2020\n",
+        "\n",
+        "table_df[\"Absolute Change\"] = table_df[\"2010\"] - table_df[\"2020\"]\n",
+        "\n",
+        "px.scatter(\n",
+        "    table_df, \n",
+        "    color=\"country\", \n",
+        "    labels={\"2010\": \"Distribution of Deaths in 2010\", \"index\": \"Countries\"},\n",
+        "    title=\"Relationship Between Deaths in Countries in 2010\",\n",
+        "    x=\"2010\").update_layout(showlegend=False)"
+      ],
+      "id": "addc7976",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"80%\"}"
+      ],
+      "id": "b100537e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Calculate difference of mortality rate between 2010 and 2020\n",
+        "\n",
+        "table_df[\"Absolute Change\"] = table_df[\"2010\"] - table_df[\"2020\"]\n",
+        "\n",
+        "px.scatter(\n",
+        "    table_df,\n",
+        "    color=\"country\",\n",
+        "    labels={\"2020\": \"Distribution of Deaths in 2020\", \"index\": \"Countries\"},\n",
+        "    title=\"Relationship Between Deaths in Countries in 2020\",\n",
+        "    x=\"2020\").update_layout(showlegend=False)"
+      ],
+      "id": "1d7638ba",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Row  {height=\"70%\"}"
+      ],
+      "id": "4b6a7467"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"80%\"}\n",
+        "\n",
+        "Displaying the interactive table with itables of child mortality rates:\n",
+        "\n",
+        "- Absolute change gives the exact units/values of difference between the selected years of 2010 and 2020.\n",
+        "\n",
+        "- Relative change displays as a change in percentage from the starting figure.\n"
+      ],
+      "id": "0c0497fb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import itables\n",
+        "itables.show(table_df, buttons=[\"csvHtml5\"]) "
+      ],
+      "id": "418e91a7",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"80%\"}\n",
+        "\n",
+        "\n",
+        "\n",
+        "# Chart Section\n",
+        "\n",
+        "## Row  {height=\"70%\"}\n",
+        "\n",
+        "### Column {width=\"80%\"}"
+      ],
+      "id": "49fcc65b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "fig_chart.show()"
+      ],
+      "id": "056c1d5f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"30%\"}\n",
+        "\n",
+        "In the line chart, from the 5 selected countries, Sierra Leone and Nigeriaa shows to have high child mortality rates from 2010. \n",
+        "\n",
+        "Senegal seems to have the lowest death rates from 2010 to 2020 perhaps due to rapid child immunization campaigns.\n",
+        "\n",
+        "The rates slowly declines, perhaps due to immunisation practices, such as polio, for children and aggressive immunization campagins against childhood diseases.\n",
+        "\n",
+        "\n",
+        "## Row 2 {height=\"70%\"}\n",
+        "\n",
+        "### Column {width=\"80%\"}\n"
+      ],
+      "id": "373b2e1e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "country_fig = px.bar(\n",
+        "    child_mort_pop_combined_subset,\n",
+        "    x=\"year\",\n",
+        "    y=\"deaths\",\n",
+        "    color=\"country\",\n",
+        "    barmode=\"group\",\n",
+        "  \n",
+        "    title=\"Distribution of Deaths by Country\",\n",
+        "   \n",
+        "    hover_data=[\"country\"],  # This adds country names to hover info\n",
+        "    color_discrete_sequence=px.colors.sequential.Turbo,  # Built-in Blues palette\n",
+        ").update_layout(\n",
+        "    showlegend=False, xaxis_title=\"Year\", yaxis_title=\"Child Mortality\"\n",
+        ")\n",
+        "\n",
+        "country_fig"
+      ],
+      "id": "6ee91d56",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Column {width=\"30%\"}\n",
+        "\n",
+        "In the bar chart, from the 5 selected countries, Sierra Leone and Nigeriaa shows to have high child mortality rates from 2010. \n",
+        "\n",
+        "Senegal seems to have the lowest death rates from 2010 to 2020 perhaps due to rapid child immunization campaigns.\n",
+        "\n",
+        "The rates slowly declines, perhaps due to immunisation practices, such as polio, for children and aggressive immunization campagins against childhood diseases.\n",
+        "\n",
+        "\n",
+        "\n",
+        "# About\n",
+        "\n",
+        "**Goal**\n",
+        "\n",
+        "In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).\n",
+        "\n",
+        "The goal is to clean and merge these raw datasets and produce tables and charts with the data.\n",
+        "\n",
+        "The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:\n",
+        "\n",
+        "- First Indicator Analysis\n",
+        "- Second Indicator Analysis\n",
+        "- Relationship between the two indicators. No statistical analysis is required; this can be purely descriptive/graphical.\n",
+        "\n",
+        "**Data Import**\n",
+        "\n",
+        "I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.\n",
+        "\n",
+        "1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).\n",
+        "\n",
+        "According to Gapminder description, child mortality is the probability of dying between birth and exactly five years of age expressed in 1000 live births.\n",
+        "\n",
+        "2. **Under Five Population**. (*data/u5pop.csv*).\n",
+        "\n",
+        "According to Gapminder description, is the total number of children, aged 0-4 years old.\n",
+        "\n",
+        "Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure."
+      ],
+      "id": "dc35bbf3"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "c:\\Users\\piano\\Documents\\GitHub\\python_final_project\\.venv\\share\\jupyter\\kernels\\python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

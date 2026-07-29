@@ -1,47 +1,16 @@
 ---
-title: "Python Workshop Final Project: Table, Map, and Chart"
+title: "Python Workshop Final Project"
 author: "George Davis"
 format: dashboard
 ---
 
-## Introduction
 
-In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).
-
-The goal is to clean and merge these raw datasets.
-
-The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:
-
-- First Indicator Analysis
-- Second Indicator Analysis
-- Relationship between the two indicators. No statistical analysis is required; this can be purely descriptive/graphical.
-
-
-## Load Libraries 
 
 ```{python}
 import pandas as pd
 import plotly.express as px
 from itables import show 
 
-```
-
-
-## Data Import
-
-I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.
-
-1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).
-
-According to Gapminder description, child mortality is the probability of dying between birth and exactly five years of age expressed in 1000 live births.
-
-2. **Under Five Population**. (*data/u5pop.csv*).
-
-According to Gapminder description, is the total number of children, aged 0-4 years old.
-
-## Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure.
-
-```{python}
 # Load raw data from specified paths: child mortality
 
 child_mort_raw = pd.read_csv("data/child_mortality_0_5_year_olds_dying_per_1000_born.csv")
@@ -49,11 +18,6 @@ child_mort_raw = pd.read_csv("data/child_mortality_0_5_year_olds_dying_per_1000_
 # Applying 'drop' to remove the *geo* column and keeping the dataframe.
 # child_mort_raw = child_mort_raw.drop(columns=["geo"])#
 
-```
-
-### Using 'drop' to remove a column.
-
-```{python}
 # Load raw data from specified paths: under five population
 
 under_five_pop_raw = pd.read_csv("data/u5pop.csv")
@@ -61,43 +25,14 @@ under_five_pop_raw = pd.read_csv("data/u5pop.csv")
 # Applying 'drop' to remove the *geo* column and keeping the dataframe.
 # under_five_pop_raw = under_five_pop_raw.drop(columns=["geo"])
 
-```
 
-```{python}
-under_five_pop_raw
-```
-
-### Using 'rename' to rename 'name' to 'country'
-
-```{python}
 #Keeping the renaming changes in the dataframe
 
 child_mort_raw = child_mort_raw.rename(columns={"name": "country"})
 
-```
-
-```{python}
 # Keeping the renaming changes in the dataframe.
 under_five_pop_raw = under_five_pop_raw.rename(columns={"name": "country"})
 
-```
-
-
-```{python}
-
-```
-
-
-## Reshape Data
-
-Converting the wide data to long format.
-
-Reshaping the *child_mort_raw* dataset by converting the columns that represent different years into a new column called *year*-
-
-Using the *melt* function to reshape the dataset.
-
-
-```{python}
 
 # Melt from wide to long format and adding a new dataframe 'child_mort_long'
 
@@ -106,77 +41,39 @@ child_mort_long = child_mort_raw.melt(
     var_name="year",
     value_name="deaths"
 ).sort_values(by=["country", "year"])
-child_mort_long
-```
 
-Applying the same method to convert columns to long format for 'under five pop' dataset
-
-```{python}
 
 # Melt from wide to long format and adding a new dataframe 'under_five_pop_long'
+
 
 under_five_pop_long = under_five_pop_raw.melt(
     id_vars=["geo", "country"],
     var_name="year",
     value_name="population"
 ).sort_values(by=["country", "year"])
-under_five_pop_long
-```
 
-## Joining the two datasets using the *merge* method.
 
-Both datasets are in the long format to be joined.
-
-Both are merged with 'outer' to keep much information as possible.
-
-```{python}
 # Joining the two datasets using 'merge' into a new dataframe 'child_mort_pop_combined'
 
 # Adding a new dataframe 'child_mort_pop_combined'
 
 child_mort_pop_combined = pd.merge(child_mort_long, under_five_pop_long, on=["country", "year"], how="outer")
-child_mort_pop_combined
 
-```
-
-
-The combined datasets will have some missing values from year 1800 onwards. A query method could be used to filter a few countries and a range of years.
-
-## Quering. Selecting a few countries and a range of years.
-
-```{python}
 
 # Convert year to numeric using pd.to_numeric
 
 child_mort_pop_combined["year"] = pd.to_numeric(child_mort_pop_combined["year"], errors="coerce")
-
-```
-
-
-```{python}
 
 # Creating a new dataframe with the range in years 2010 - 2020.
 
 # Querying for the years
 child_mort_pop_combined_2010_2020 = child_mort_pop_combined[child_mort_pop_combined["year"].between(2010, 2020)]
 
-```
 
-Query for years between 2010 and 2020 (that is 2010, 2011, ..., 2019, 2020)
+# Querying a few countries in a new dataframe also displaying the range in years from 2010 to 2020.
 
+child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Lesotho', 'Madagascar', 'Afghanistan', 'Ghana', 'Albania', 'Canada', 'Jamaica', 'Austria', 'Australia', 'Peru', 'Senegal', 'Lesotho', 'South Africa', 'Russia', 'Gambia', 'Nigeria', 'Venezuela', 'Ethiopia', 'Togo', 'Algeria'])")
 
-```{python}
-
-# Querying my selected 5 countries in a new dataframe also displaying the range in years from 1990 to 2020.
-
-child_mort_pop_combined_subset = child_mort_pop_combined_2010_2020.query("country.isin(['Afghanistan', 'Australia', 'Ghana', 'Albania', 'Chile'])")
-child_mort_pop_combined_subset
-```
-
-
-## Chart Section
-
-```{python}
 
 # Creating a line chart. 
 
@@ -185,19 +82,10 @@ fig_chart = px.line(
     x="year",
     y="deaths",
     markers=True,
-    color="country"
+    color="country",
 )
-fig_chart
-```
 
 
-## Table Section
-
-```{python}
-child_mort_raw
-```
-
-```{python}
 
 # Subset the data to include `country`, `2010`, and `2020` columns only.
 table_df = child_mort_raw[["country", "2010", "2020"]]
@@ -214,7 +102,97 @@ table_df["Relative Change"] = table_df["2010"] / table_df["2020"] * 100
 
 table_df["Relative Change"] = table_df["Relative Change"].round(0).astype(str) + "%"
 
+
+# Convert the existing ISO3 codes to uppercase
+
+# Creating a map
+
+child_mort_pop_combined_subset["geo_x"] = child_mort_pop_combined_subset["geo_y"].str.upper()
+
+fig_map = px.choropleth(
+    child_mort_pop_combined_subset,
+    locations="geo_x",
+    color="country",
+    hover_name="deaths",
+    title="Child Mortality Rates (2010-2020)",  
+    
+).update_layout(showlegend=False)
+
 ```
+
+
+
+# Home 
+
+```{python}
+
+#table_df = child_mort_raw[["country", "2010", "2020"]].copy()
+
+#table_df["Absolute Change"] = table_df["2020"] - table_df["2010"]
+#table_df["Relative Change"] = (table_df["2020"] - table_df["2010"]) / table_df["2010"] * 100
+
+
+#avg_absolute_change = round(table_df["Absolute Change"].median(), 2)
+#avg_relative_change = round(table_df["Relative Change"].mean(), 1)
+
+
+table_df = child_mort_raw[["country", "2010", "2020"]].copy()
+
+table_df["Absolute Change"] = table_df["2020"] - table_df["2010"]
+table_df["Relative Change"] = (table_df["2020"] - table_df["2010"]) / table_df["2010"] * 100
+
+
+avg_absolute_change = float(round(table_df["Absolute Change"].median() , 2))
+avg_relative_change = float(round(table_df["Relative Change"].mean(), 1))
+total_countries = table_df["country"].nunique()
+
+```
+
+
+
+## Row  {height="30%"}
+
+
+::: {.valuebox title="Absolute Change" color="primary" icon="heart"}
+`{python} avg_absolute_change`
+
+Displaying a median change
+:::
+
+::: {.valuebox title="Relative Change" color="secondary" icon="activity" }
+`{python} avg_relative_change`
+
+Displaying the mean
+:::
+
+::: {.valuebox title="Total Countries" color="success" icon="bar-chart"}
+
+Total Number of Countries are 148
+
+:::
+
+## Row  {height="15%"}
+The map below displays the selected priority countries with a distribution of child mportality per country.
+
+The bar chart on the right panel displays 10 selected countries with a distribution of mortality rates. 
+
+
+
+
+
+
+## Row {height="30%"}
+
+### column {width="80%"}
+
+```{python}
+fig_map
+```
+
+
+
+# Table 
+
 
 Displaying the interactive table with itables:
 
@@ -226,8 +204,13 @@ show(table_df)
 
 
 
+# Chart Section
 
-# Page 1
+Some test here
+
+
+
+# About
 
 ## Row {height="30%"}
 
@@ -252,7 +235,7 @@ show(table_df)
 
 ```
 
-# Page 2
+
 
 
 ```{python}
@@ -260,4 +243,3 @@ show(table_df)
 ```
 
 
-# Page 3
