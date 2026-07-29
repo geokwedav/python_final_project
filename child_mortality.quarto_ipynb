@@ -14,7 +14,7 @@
         "        scrolling: false\n",
         "---\n"
       ],
-      "id": "4858fb6c"
+      "id": "da20d869"
     },
     {
       "cell_type": "code",
@@ -166,7 +166,7 @@
         "    title=\"Child Mortality Rates (2010-2020) for Selected Countries\",\n",
         ").update_layout(showlegend=False)"
       ],
-      "id": "1835a646",
+      "id": "b0e6e5f4",
       "execution_count": null,
       "outputs": []
     },
@@ -178,7 +178,7 @@
         "\n",
         "A final subsetted dataset lists countries, years, percentages of deaths per population between 2010-2020.\n"
       ],
-      "id": "56005912"
+      "id": "318d4430"
     },
     {
       "cell_type": "code",
@@ -189,7 +189,7 @@
         "num_cols = child_mort_pop_combined_2010_2020.shape[1]\n",
         "num_rows = child_mort_pop_combined_2010_2020.shape[0]"
       ],
-      "id": "6d07a4b0",
+      "id": "c4bf4441",
       "execution_count": null,
       "outputs": []
     },
@@ -230,7 +230,7 @@
         "\n",
         "### {width=80%}\n"
       ],
-      "id": "98b570fc"
+      "id": "836fabc7"
     },
     {
       "cell_type": "code",
@@ -239,7 +239,7 @@
         "# Map goes here\n",
         "map_fig # map comes here"
       ],
-      "id": "37ca227d",
+      "id": "cdaca091",
       "execution_count": null,
       "outputs": []
     },
@@ -249,7 +249,7 @@
       "source": [
         "### {width=40%}\n"
       ],
-      "id": "fc19dfec"
+      "id": "8c280d2e"
     },
     {
       "cell_type": "code",
@@ -257,7 +257,7 @@
       "source": [
         "bar_fig # bar chart comes here"
       ],
-      "id": "bd9af3b8",
+      "id": "0d39bcd2",
       "execution_count": null,
       "outputs": []
     },
@@ -267,14 +267,14 @@
       "source": [
         "# Absolute and Relative Change\n",
         "\n",
-        "## Row \n",
+        "## Row {height=\"13%\"}\n",
         "\n",
+        "###\n",
+        "Relationship between death estimates in 5 selected first group of other populous countries: Philippines, Mexico, Egypt, China, Brazil.\n",
         "\n",
-        "Final merged dataset 2010-2020 has 194 columns with missing values for some countries.\n",
-        "\n",
-        "\n",
-        "\n",
-        "\n",
+        "###\n",
+        "test\n",
+        "Relationship between death estimates in 5 selected group of most populous countries: Pakistan, Nigeria, Indonesia, India, Bangladesh.\n",
         "\n",
         "\n",
         "## Row  {height=\"70%\"}\n",
@@ -284,7 +284,7 @@
         "\n",
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "a95a1190"
+      "id": "9ade5df2"
     },
     {
       "cell_type": "code",
@@ -301,7 +301,7 @@
         "    title=\"Relationship Between Deaths in Other Populous Countries\",\n",
         "    x=\"year\", y=\"deaths\").update_layout(showlegend=False)"
       ],
-      "id": "4d708fb4",
+      "id": "f9ddf4ab",
       "execution_count": null,
       "outputs": []
     },
@@ -311,7 +311,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "11210037"
+      "id": "4a896d87"
     },
     {
       "cell_type": "code",
@@ -328,7 +328,7 @@
         "    title=\"Relationship Between Deaths in Most Populous Countries\",\n",
         "    x=\"year\", y=\"deaths\").update_layout(showlegend=False)"
       ],
-      "id": "5ccee2ed",
+      "id": "4c074c7f",
       "execution_count": null,
       "outputs": []
     },
@@ -351,7 +351,7 @@
         "\n",
         "### Column {width=\"80%\"}"
       ],
-      "id": "8c514165"
+      "id": "af38562b"
     },
     {
       "cell_type": "code",
@@ -360,7 +360,7 @@
         "import itables\n",
         "itables.show(table_df, buttons=[\"csvHtml5\"]) "
       ],
-      "id": "d72ab1b2",
+      "id": "6163b471",
       "execution_count": null,
       "outputs": []
     },
@@ -376,7 +376,7 @@
         "\n",
         "## Row  {height=\"80%\"}\n"
       ],
-      "id": "ed4489a2"
+      "id": "a1319d5e"
     },
     {
       "cell_type": "code",
@@ -390,7 +390,7 @@
         "    title=\"Philippines and Russa (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", barmode=\"group\").update_layout(showlegend=False)"
       ],
-      "id": "f94f21a4",
+      "id": "20d8ae1d",
       "execution_count": null,
       "outputs": []
     },
@@ -400,7 +400,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "c4d51c09"
+      "id": "cf78893b"
     },
     {
       "cell_type": "code",
@@ -414,7 +414,7 @@
         "    title=\"Nigeria and Egypt (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", markers=True).update_layout(showlegend=False)"
       ],
-      "id": "7f824c65",
+      "id": "10c89da9",
       "execution_count": null,
       "outputs": []
     },
@@ -424,7 +424,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "eb9f24e5"
+      "id": "5f69f172"
     },
     {
       "cell_type": "code",
@@ -438,7 +438,7 @@
         "    title=\"Brazil and Mexico (2010-2020)\",\n",
         "    x=\"year\", y=\"deaths\", size=\"population\").update_layout(showlegend=False)"
       ],
-      "id": "71389647",
+      "id": "b191f403",
       "execution_count": null,
       "outputs": []
     },
@@ -448,7 +448,7 @@
       "source": [
         "### Column {width=\"80%\"}\n"
       ],
-      "id": "6824aca3"
+      "id": "4671e157"
     },
     {
       "cell_type": "code",
@@ -465,7 +465,7 @@
         "    color_discrete_sequence=[\"#1f77b4\", \"#ff7f0e\"]\n",
         ").update_layout(showlegend=False)"
       ],
-      "id": "b49614e2",
+      "id": "452c16be",
       "execution_count": null,
       "outputs": []
     },
@@ -481,7 +481,7 @@
         "\n",
         "### Column {width=\"70%\"}\n"
       ],
-      "id": "9bc16e21"
+      "id": "68bc0d26"
     },
     {
       "cell_type": "code",
@@ -505,7 +505,7 @@
         "\n",
         "box_fig"
       ],
-      "id": "1397bc8f",
+      "id": "2b0943ea",
       "execution_count": null,
       "outputs": []
     },
@@ -552,7 +552,7 @@
         "\n",
         "Loading the datasets into Python using 'pd.read_csv' to have an idea of the data structure."
       ],
-      "id": "74dad4fa"
+      "id": "9a2e66ce"
     }
   ],
   "metadata": {

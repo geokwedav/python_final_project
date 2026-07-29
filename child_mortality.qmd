@@ -138,9 +138,11 @@ bar_fig = px.bar(
     top_8,
     x="deaths",
     y="country",
+    labels={"deaths": "Deaths (2010-2020)", "country": "Countries"},
     title="Child Mortality Rates in 8 Largest Countries",
     color="deaths",
     color_continuous_scale="Greens",
+    text_auto=True
 ).update_layout(coloraxis_showscale=False)
 
 
@@ -164,8 +166,7 @@ map_fig = px.choropleth(
 
 # Home 
 
-A final subsetted dataset lists countries, years, percentages of deaths per population between 2010-2020.
-
+This report displays a final subsetted dataset list of priority countries that describes child mortality rates per country, between 2010-2020. The data below summarizes main information from the subsetted dataset. Subsequent pages will display plots and tables for absolute and relative changes, as well as plots displaying the selected priority countries.
 
 
 ```{python}
@@ -193,7 +194,7 @@ Final merged dataset 2010-2020 has 194 columns with missing values for some coun
 
 ::: {.valuebox title="Main Indicator" color="success" icon="exclamation-circle"}
 
-Child Mortality for under 5 population subsetted from 2010-2020
+Child Mortality for under 5 population subsetted between 2010-2020
 :::
 
 
@@ -230,23 +231,18 @@ bar_fig # bar chart comes here
 
 # Absolute and Relative Change
 
-## Row 
+## Row {height="13%"}
 
+###
+Relationship between death estimates in 5 selected first group of other populous countries: Philippines, Mexico, Egypt, China, Brazil (2010-2020)
 
-Final merged dataset 2010-2020 has 194 columns with missing values for some countries.
-
-
-
-
+###
+Relationship between death estimates in 5 selected group of most populous countries: Pakistan, Nigeria, Indonesia, India, Bangladesh (2010-2020)
 
 
 ## Row  {height="70%"}
 
-
-
-
 ### Column {width="80%"}
-
 
 
 ```{python}
@@ -311,6 +307,10 @@ itables.show(table_df, buttons=["csvHtml5"])
 
 
 # Priority Countries
+
+The 4 plots below displays child mortality rates in the priority countries, grouped in 2s.
+
+For example: the relationship between Nigeria and Egypt shows a wider gap, the former country with higher rates and the latter with lower rates. Nigeria can learn from Egypt the measures taken to reduce child mortality rates for Under 5 population.
 
 ## Row  {height="80%"}
 
@@ -422,11 +422,9 @@ In contrast, countries such as India, Bangladesh, and Indonesia showcase compres
 
 **Goal**
 
-In this final project, I will display relationships between child mortality, and under 5 population (0-5 years).
+This data displays relationships between child mortality, and under 5 population (0-5 years) between 2010 to 2020.
 
-The goal is to clean and merge these raw datasets and produce tables and charts with the data.
-
-The data was downloaded from Gapminder and the goal of this projec to produce a report with three pages:
+The goal of this project is to produce a report with three pages:
 
 - First Indicator Analysis
 - Second Indicator Analysis
@@ -434,7 +432,8 @@ The data was downloaded from Gapminder and the goal of this projec to produce a 
 
 **Data Import**
 
-I have imported 2 *raw* datasets, 'child_mortality_0_5_years' and 'under 5 population' accessed from Gapminder Foundation.
+2 raw datasets were imported: 'child_mortality_0_5_years', and
+'under 5 population' accessed from Gapminder Foundation.
 
 1. **Child Mortality from 0 to 5 years**. (*data/child_mortality_0_5_year_olds_dying_per_1000_born.csv*).
 
